@@ -1,39 +1,67 @@
 from bson import ObjectId
 from hashlib import md5
-import logging, os, shutil
-
+import logging, os, shutil, random
+from datetime import datetime
 
 from db import Database
 
 
 def _register(data):
-    data['_id'] = md5(data['_id']).encode()).hexdigest()
+    data['_id'] = hash(data['_id'])
+    logging.debug('Usuario de _id', data['_id'])
     db = Database('users')
     if db.find_one({'_id': ObjectId(data['_id'])}) == None:
+
+        folder = os.getcwd()+'/dataset' + data['_id']
+        os.mkdir(folder)
         _id = db.insert_one({
-            '_id': ObjectId(data['_id']))
+            '_id': ObjectId(data['_id']),
+            'path_folder': folder,
+            'last_training': ''
         })
 
-        folder = os.mkdir('./dataset/' + str(data['_id']))
-#TODO
-        return {'_id': _id, 'folder': folder}
+        return {
+            '_id': _id,
+            'folder': folder,
+            'status': 'sucess'
+        }
     else:
-        return 'User already exist'
+        return {
+            'status': 'error',
+            'errors': ['User already exist']
+        }
 
 
 def _insert_data(data):
-    data['_id'] = md5(data['_id']).encode()).hexdigest()
+    data['_id'] = hash(data['_id'])
     db = Database('users')
+    user = db.find_one({'_id': ObjectId(data['_id'])})
 
-    if db.find_one({'_id': ObjectId(data['_id'])}) == None:
+    if user != None:
         try:
-            os.listdir('./dataset').index(data['_id'])
+            os.listdir(os.getcwd()+'/dataset').index(data['_id'])
+            _files = []
+            for i in data['path_files']:
+                _file = i.split('/')[-1]
+                ext = _file.split('.')[-1]
+                to = './dataset/' + data['_id'] + hash(_file + str(random.random()))+ ext
+                shutil.copyfile(i, to)
+                _files.append(to)
+            return {'status': 'sucess'}
 
         except:
-            pass
+            os.mkdir(os.getcwd()+'/dataset/' + data['_id'])
+            _files = []
+            for i in data['path_files']:
+                _file = i.split('/')[-1]
+                ext = _file.split('.')[-1]
+                to = './dataset/' + data['_id'] + hash(_file + str(random.random()))+ ext
+                shutil.copyfile(i, to)
+                _files.append(to)
+            return {'status': 'sucess'}
 
-
-
+    else:
+        return {'status': 'error', 'eror': ['existing user!']}
 
 
 def _login(data):
@@ -42,4 +70,9 @@ def _login(data):
 
 def _train(data):
     pass
+
+
+
+def hash(_input):
+    return md5(_input.encode()).hexdigest()
 
