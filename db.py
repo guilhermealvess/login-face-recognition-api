@@ -3,27 +3,24 @@ from pymongo import MongoClient
 from credentials import mongodb
 
 
-class Database:
+class Database():
 
     def __init__(self, collection):
-        self.collection = collection
-        self.database = 'face_recognition'
-        client = MongoClient('mongodb://localhost:27017/')
-        db = client[self.database]
-        self.col = db[self.collection]
+        self.client = MongoClient('mongodb://{}:{}'.format(mongodb['host'],mongodb['port']))
+        self.client = MongoClient('localhost',27017)
+        self.collection = self.client[mongo['database']][collection]
 
+    def find_one(self, json):
+        query = self.collection.find_one(json)
+        if query:
+            return query
+        else:
+            return None
 
-    def find_one(self):
-        pass
+    def insert_one(self, json):
+        return self.collection.insert_one(json).inserted_id
 
+    def update_one(self, new_json, json):
+        new_values = { "$set": new_json }
+        return self.collection.update_one(json, new_values)
 
-    def insert_one(self,doc):
-        return self.col.insert_one(doc).inserted_id
-
-
-    def delete_one(self):
-        pass
-        
-
-    def update_one(self):
-        pass
