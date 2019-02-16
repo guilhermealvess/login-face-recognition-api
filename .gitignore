@@ -4,4 +4,4 @@ __pycache__/
 
 *.log
 
-credentials.py
+#credentials.py
