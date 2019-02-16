@@ -102,7 +102,7 @@ def _train(data):
                     'status': 'sucess',
                     '_id': data['_id'],
                     'model_id': model_id,
-                    'datetime' user['last_training']['datetime'],
+                    'datetime': user['last_training']['datetime'],
                     'time_training': user['last_training']['time_training']
                 }
 
@@ -130,7 +130,7 @@ def _train(data):
                     'status': 'sucess',
                     '_id': data['_id'],
                     'model_id': model_id,
-                    'datetime' user['last_training']['datetime'],
+                    'datetime': user['last_training']['datetime'],
                     'time_training': user['last_training']['time_training']
                 }
 
