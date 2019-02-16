@@ -4,7 +4,7 @@ import logging, os, shutil, random
 from datetime import datetime
 
 from db import Database
-#from core.processor import recognition
+from core.processor import recognition
 from core.decodificador_faces import start_training
 
 
@@ -66,13 +66,6 @@ def _insert_data(data):
         return {'status': 'error', 'eror': ['existing user!']}
 
 
-def _login(data):
-    data['_id'] = hash(data['_id'])
-    db = Database('users')
-    user = db.find_one({'_id': ObjectId(data['_id'])})
-
-
-
 def _train(data):
     data['_id'] = hash(data['_id'])
     db = Database('users')
@@ -94,7 +87,8 @@ def _train(data):
                 user['last_training'] = {
                     "datetime": str(datetime.now())[0:19],
                     "model_id": model_id,
-                    "time_training": str(end-start)
+                    "time_training": str(end-start),
+                    "method_training": data['method_training']
                 }
                 db.update_one(user, {'_id': ObjectId(data['_id'])})
 
@@ -141,6 +135,31 @@ def _train(data):
         return {'status': 'error', 'errors': ['user not found']}
             
     
+def _login(data):
+    data['_id'] = hash(data['_id'])
+    db = Database('users')
+    user = db.find_one({'_id': ObjectId(data['_id'])})
+
+    if user != None:
+        data['model_id'] = os.getcwd()+'/model/'+user['last_training']['model_id']
+    
+        result = recognition(data)
+
+        if result == True:
+            ext = data['image'].split('.')[-1]
+            shutil.copyfile(data['image'], os.getcwd()+'/dataset/'+data['_id']+hash(data['_id']+str(datetime.now()))+ext)
+
+            return {
+                'status': 'sucess',
+                '_id': data['_id'],
+                'authorized': True
+                }
+        else:
+            return {
+                'authorized': False,
+                '_id': data['_id'],
+                'status': 'login refused'
+            }
 
 
 

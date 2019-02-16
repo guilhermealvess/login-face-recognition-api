@@ -6,7 +6,7 @@ from credentials import mongodb
 class Database():
 
     def __init__(self, collection):
-        self.client = MongoClient('mongodb://{}:{}'.format(mongodb['host'],mongodb['port']))
+        # self.client = MongoClient('mongodb://{}:{}'.format(mongodb['host'],mongodb['port']))
         self.client = MongoClient('localhost',27017)
         self.collection = self.client[mongo['database']][collection]
 
