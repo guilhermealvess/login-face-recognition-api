@@ -82,3 +82,7 @@ print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
 cv2.destroyAllWindows()
 vs.stop()
+
+
+def recognition():
+	pass

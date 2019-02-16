@@ -4,6 +4,8 @@ import logging, os, shutil, random
 from datetime import datetime
 
 from db import Database
+#from core.processor import recognition
+from core.decodificador_faces import start_training
 
 
 def _register(data):
@@ -16,8 +18,9 @@ def _register(data):
         os.mkdir(folder)
         _id = db.insert_one({
             '_id': ObjectId(data['_id']),
-            'path_folder': folder,
-            'last_training': ''
+            'path_folder_dataset': folder,
+            'last_training': '',
+            "active": False
         })
 
         return {
@@ -38,24 +41,23 @@ def _insert_data(data):
     user = db.find_one({'_id': ObjectId(data['_id'])})
 
     if user != None:
-        try:
-            os.listdir(os.getcwd()+'/dataset').index(data['_id'])
+        
+        if exist_folder('/dataset',data['_id']) == True:
             _files = []
             for i in data['path_files']:
                 _file = i.split('/')[-1]
                 ext = _file.split('.')[-1]
-                to = './dataset/' + data['_id'] + hash(_file + str(random.random()))+ ext
+                to = os.getcwd() + '/dataset/' + data['_id'] + hash(_file + str(random.random()))+ ext
                 shutil.copyfile(i, to)
                 _files.append(to)
             return {'status': 'sucess'}
 
-        except:
-            os.mkdir(os.getcwd()+'/dataset/' + data['_id'])
+        else: #TODO Criar pasta
             _files = []
             for i in data['path_files']:
                 _file = i.split('/')[-1]
                 ext = _file.split('.')[-1]
-                to = './dataset/' + data['_id'] + hash(_file + str(random.random()))+ ext
+                to = os.getcwd() + '/dataset/' + data['_id'] + hash(_file + str(random.random()))+ ext
                 shutil.copyfile(i, to)
                 _files.append(to)
             return {'status': 'sucess'}
@@ -65,14 +67,73 @@ def _insert_data(data):
 
 
 def _login(data):
-    pass
+    data['_id'] = hash(data['_id'])
+    db = Database('users')
+    user = db.find_one({'_id': ObjectId(data['_id'])})
+
 
 
 def _train(data):
-    pass
+    data['_id'] = hash(data['_id'])
+    db = Database('users')
+    user = db.find_one({'_id': ObjectId(data['_id'])})
+
+    if user != None:
+        if exist_folder('/dataset',data['_id']) == True:
+            if existe_folder('/model', data['_id']) == True:
+                model_id = hash(data['_id'] + str(datetime.now())) + '.pickle'
+
+                data['path_model'] = os.getcwd()+'/models/'+data['_id']+'/'+model_id
+                data['path_images'] = os.getcwd()+'/dataset/'+data['_id']
+
+                start = datetime.now()
+                start_training(data)
+                end = datetime.now()
+
+                user['active'] = True
+                user['last_training'] = {
+                    "datetime": str(datetime.now())[0:19],
+                    "model_id": model_id,
+                    "time_training": str(end-start)
+                }
+                db.update_one(user, {'_id': ObjectId(data['_id'])})
+
+            else:
+                folder = os.getcwd()+'/model/'+data['_id']
+                os.mkdir(folder)
+                model_id = hash(data['_id'] + str(datetime.now())) + '.pickle'
+                data['path_model'] = folder+'/'+model_id
+                data['path_images'] = os.getcwd()+'/dataset/'+data['_id']
+
+                start = datetime.now()
+                start_training(data)
+                end = datetime.now()
+
+                user['active'] = True
+                user['last_training'] = {
+                    "datetime": str(datetime.now())[0:19],
+                    "model_id": model_id,
+                    "time_training": str(end-start)
+                }
+                db.update_one(user, {'_id': ObjectId(data['_id'])})
+
+
+        else:
+            return {'status': 'error', 'errors': ['folder dataset not found']}
+    else:
+        return {'status': 'error', 'errors': ['user not found']}
+            
+    
 
 
 
 def hash(_input):
     return md5(_input.encode()).hexdigest()
+
+def exist_folder(folder,i):
+    try:
+        os.listdir(os.getcwd()+folder).index(i)
+        return True
+    except:
+        return False
 

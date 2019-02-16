@@ -1,6 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request 
 import logging, sys
 from pprint import pprint
+import requests
+
 
 from functions import _register, _insert_data, _login, _train
 
@@ -35,16 +37,16 @@ def insert_data():
     _insert_data(request.get_json(force=True))
 
 
-@app.route('/api/login', methods=['GET'])
-def login():
-    _login(request.get_json(force=True))
-
-
 @app.route('/api/train', methods=['POST'])
 def train():
     _train(request.get_json(force=True))
 
     
+@app.route('/api/login', methods=['GET'])
+def login():
+    _login(request.get_json(force=True))
+
+
 
 if __name__ == '__main__':
     config_log()
