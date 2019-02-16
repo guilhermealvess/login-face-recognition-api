@@ -98,6 +98,15 @@ def _train(data):
                 }
                 db.update_one(user, {'_id': ObjectId(data['_id'])})
 
+                return {
+                    'status': 'sucess',
+                    '_id': data['_id'],
+                    'model_id': model_id,
+                    'datetime' user['last_training']['datetime'],
+                    'time_training': user['last_training']['time_training']
+                }
+
+
             else:
                 folder = os.getcwd()+'/model/'+data['_id']
                 os.mkdir(folder)
@@ -116,6 +125,14 @@ def _train(data):
                     "time_training": str(end-start)
                 }
                 db.update_one(user, {'_id': ObjectId(data['_id'])})
+
+                return {
+                    'status': 'sucess',
+                    '_id': data['_id'],
+                    'model_id': model_id,
+                    'datetime' user['last_training']['datetime'],
+                    'time_training': user['last_training']['time_training']
+                }
 
 
         else:
