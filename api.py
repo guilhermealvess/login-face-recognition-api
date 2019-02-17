@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import logging, sys, json
+from pprint import pprint
 
 from functions import _register, _insert_data, _login, _train
 
@@ -26,22 +27,34 @@ def config_log():
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    return jsonify(_register(request.get_json(force=True)))
+    _request = request.get_json(force=True)
+    response = _register(_request)
+    pprint(response)
+    return jsonify(response)
 
 
 @app.route('/api/insert', methods=['POST'])
 def insert_data():
-    return jsonify(_insert_data(request.get_json(force=True)))
+    _request = request.get_json(force=True)
+    response = _insert_data(_request)
+    pprint(response)
+    return jsonify(response)
 
 
 @app.route('/api/train', methods=['POST'])
 def train():
-    return jsonify(_train(request.get_json(force=True)))
+    _request = request.get_json(force=True)
+    response = _train(_request)
+    pprint(response)
+    return jsonify(response)
 
     
 @app.route('/api/login', methods=['GET'])
 def login():
-    return jsonify(_login(request.get_json(force=True)))
+    _request = request.get_json(force=True)
+    response = _login(_request)
+    pprint(response)
+    return jsonify(response)
 
 
 @app.route('/api', methods=['GET', 'POST'])
