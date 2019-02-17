@@ -15,7 +15,7 @@ pprint({
     'status': 'CREATE SUCESS!',
     'database': 'face_recognition',
     'collection': 'users',
-    'doc_init': _id
+    'doc_init': _id.inserted_id
 })
 
 _examples = {

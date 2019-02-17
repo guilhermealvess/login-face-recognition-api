@@ -1,38 +1,16 @@
-#from imutils.video import VideoStream
-#from imutils.video import FPS
 import face_recognition
-import argparse
 import imutils
 import pickle
 import cv2
+import os
 
-
-"""
-ap = argparse.ArgumentParser()
-
-ap.add_argument("-c", "--cascade", required=True,
-	help = "path to where the face cascade resides")
-
-ap.add_argument("-e", "--encodings", required=True,
-	help="path to serialized db of facial encodings")
-
-args = vars(ap.parse_args())
-"""
 
 def recognition(factions):
 
-
 	print("[INFO] loading encodings + face detector...")
 	data = pickle.loads(open(factions["model_id"], "rb").read())
-	detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-
-	print("[INFO] starting video stream...")
-	#vs = VideoStream(src=0).start()
-	#time.sleep(2.0)
-
-	#fps = FPS().start()
+	detector = cv2.CascadeClassifier(os.getcwd()+'/core/'+'haarcascade_frontalface_default.xml')
 	
-	#frame = vs.read()
 	frame = cv2.imread(factions['image'])
 	frame = imutils.resize(frame, width=500)	
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

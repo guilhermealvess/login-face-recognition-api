@@ -44,6 +44,11 @@ def login():
     return _login(request.get_json(force=True))
 
 
+@app.route('/api', methods=['GET', 'POST'])
+def hello():
+    return 'Hello API OK!'
+
+
 
 if __name__ == '__main__':
     config_log()

@@ -6,5 +6,6 @@ mongodb = {
     'user': 'root',
     'password': '*******',
     'port': 27017,
-    'host': 'localhost'
+    'host': 'localhost',
+    'database': 'face_recognition'
 }
