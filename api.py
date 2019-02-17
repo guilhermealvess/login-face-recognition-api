@@ -1,5 +1,5 @@
-from flask import Flask, request 
-import logging, sys
+from flask import Flask, request, jsonify
+import logging, sys, json
 
 from functions import _register, _insert_data, _login, _train
 
@@ -26,22 +26,22 @@ def config_log():
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    return _register(request.get_json(force=True))
+    return jsonify(_register(request.get_json(force=True)))
 
 
 @app.route('/api/insert', methods=['POST'])
 def insert_data():
-    return _insert_data(request.get_json(force=True))
+    return jsonify(_insert_data(request.get_json(force=True)))
 
 
 @app.route('/api/train', methods=['POST'])
 def train():
-    return _train(request.get_json(force=True))
+    return jsonify(_train(request.get_json(force=True)))
 
     
 @app.route('/api/login', methods=['GET'])
 def login():
-    return _login(request.get_json(force=True))
+    return jsonify(_login(request.get_json(force=True)))
 
 
 @app.route('/api', methods=['GET', 'POST'])

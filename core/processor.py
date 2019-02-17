@@ -62,7 +62,7 @@ def recognition(factions):
 	#vs.stop()
 
 	try:
-		names.index(factions['_id'])
+		names.index(factions['usr'])
 		return True
 	except:
 		return False

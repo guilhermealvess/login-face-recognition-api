@@ -10,23 +10,23 @@ from core.decodificador_faces import start_training
 
 
 def _register(data):
-    data['_id'] = hash(data['_id'])
-    logging.debug('Usuario de _id', data['_id'])
+    data['usr'] = hash(data['usr'])
+    logging.debug('Usuario de usr', data['usr'])
     db = Database('users')
 
-    if db.find_one({'_id': ObjectId(data['_id'])}) == None:
-        folder = os.getcwd()+'/dataset/' + data['_id']
+    if db.find_one({'usr': data['usr']}) == None:
+        folder = os.getcwd()+'/dataset/' + data['usr']
         os.mkdir(folder)
-        os.mkdir(os.getcwd()+'/model/'+data['_id'])
+        os.mkdir(os.getcwd()+'/models/'+data['usr'])
         _id = db.insert_one({
-            '_id': ObjectId(data['_id']),
+            'usr': data['usr'],
             'path_folder_dataset': folder,
             'last_training': '',
             "active": False
         })
 
         return {
-            '_id': _id.inserted_id,
+            'usr': data['usr'],
             'folder': folder,
             'status': 'sucess'
         }
@@ -38,20 +38,20 @@ def _register(data):
 
 
 def _insert_data(data):
-    data['_id'] = hash(data['_id'])
+    data['usr'] = hash(data['usr'])
     db = Database('users')
-    user = db.find_one({'_id': ObjectId(data['_id'])})
+    user = db.find_one({'usr': data['usr']})
 
     if user != None:
         
-        if exist_folder('/dataset',data['_id']) == False:
-            os.mkdir(os.getcwd()+'/dataset/'+data['_id'])
+        if exist_folder('/dataset',data['usr']) == False:
+            os.mkdir(os.getcwd()+'/dataset/'+data['usr'])
             
         _files = []
         for i in data['path_files']:
             _file = i.split('/')[-1]
             ext = _file.split('.')[-1]
-            to = os.getcwd()+'/dataset/'+data['_id']+'/'+hash(_file + str(random()))+ ext
+            to = os.getcwd()+'/dataset/'+data['usr']+'/'+hash(_file + str(random()))+ ext
             shutil.copyfile(i, to)
             _files.append(to)
         return {'status': 'sucess', 'path_files_altered': _files}
@@ -61,16 +61,18 @@ def _insert_data(data):
 
 
 def _train(data):
-    data['_id'] = hash(data['_id'])
+    data['usr'] = hash(data['usr'])
     db = Database('users')
-    user = db.find_one({'_id': ObjectId(data['_id'])})
+    user = db.find_one({'usr': data['usr']})
 
     if user != None:
-        if len(os.listdir(os.getcwd()+'/dataset/'+data['_id'])) > 0:
-            model_id = hash(data['_id'] + str(datetime.now())) + '.pickle'
+        if len(os.listdir(os.getcwd()+'/dataset/'+data['usr'])) > 0:
+            model_id = hash(data['usr'] + str(datetime.now())) + '.pickle'
 
-            data['path_model'] = os.getcwd()+'/models/'+data['_id']+'/'+model_id
-            data['path_images'] = os.getcwd()+'/dataset/'+data['_id']
+            data['path_model'] = os.getcwd()+'/models/'+data['usr']+'/'+model_id
+            data['path_images'] = os.getcwd()+'/dataset/'+data['usr']
+            import pprint
+            pprint.pprint(data)
 
             start = datetime.now()
             start_training(data)
@@ -83,11 +85,11 @@ def _train(data):
                 "time_training": str(end-start),
                 "method_training": data['method_training']
             }
-            db.update_one(user, {'_id': ObjectId(data['_id'])})
+            db.update_one(user, {'usr': data['usr']})
 
             return {
                 'status': 'sucess',
-                '_id': data['_id'],
+                'usr': data['usr'],
                 'model_id': model_id,
                 'datetime': user['last_training']['datetime'],
                 'time_training': user['last_training']['time_training']
@@ -101,28 +103,28 @@ def _train(data):
             
     
 def _login(data):
-    data['_id'] = hash(data['_id'])
+    data['usr'] = hash(data['usr'])
     db = Database('users')
-    user = db.find_one({'_id': ObjectId(data['_id'])})
+    user = db.find_one({'usr': data['usr']})
 
     if user != None:
-        data['model_id'] = os.getcwd()+'/model/'+user['last_training']['model_id']
+        data['model_id'] = os.getcwd()+'/models/'+user['last_training']['model_id']
     
         result = recognition(data)
 
         if result == True:
             ext = data['image'].split('.')[-1]
-            shutil.copyfile(data['image'], os.getcwd()+'/dataset/'+data['_id']+hash(data['_id']+str(datetime.now()))+ext)
+            shutil.copyfile(data['image'], os.getcwd()+'/dataset/'+data['usr']+hash(data['usr']+str(datetime.now()))+ext)
 
             return {
                 'status': 'sucess',
-                '_id': data['_id'],
+                'usr': data['usr'],
                 'authorized': True
                 }
         else:
             return {
                 'authorized': False,
-                '_id': data['_id'],
+                'usr': data['usr'],
                 'status': 'login refused'
             }
 
