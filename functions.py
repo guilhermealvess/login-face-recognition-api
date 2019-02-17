@@ -1,6 +1,7 @@
 from bson import ObjectId
 from hashlib import md5
-import logging, os, shutil, random
+import logging, os, shutil
+from random import random
 from datetime import datetime
 
 from db import Database
@@ -47,7 +48,7 @@ def _insert_data(data):
             for i in data['path_files']:
                 _file = i.split('/')[-1]
                 ext = _file.split('.')[-1]
-                to = os.getcwd() + '/dataset/' + data['_id'] + hash(_file + str(random.random()))+ ext
+                to = os.getcwd() + '/dataset/' + data['_id'] + hash(_file + str(random()))+ ext
                 shutil.copyfile(i, to)
                 _files.append(to)
             return {'status': 'sucess'}
@@ -57,7 +58,7 @@ def _insert_data(data):
             for i in data['path_files']:
                 _file = i.split('/')[-1]
                 ext = _file.split('.')[-1]
-                to = os.getcwd() + '/dataset/' + data['_id'] + hash(_file + str(random.random()))+ ext
+                to = os.getcwd() + '/dataset/' + data['_id'] + hash(_file + str(random()))+ ext
                 shutil.copyfile(i, to)
                 _files.append(to)
             return {'status': 'sucess'}

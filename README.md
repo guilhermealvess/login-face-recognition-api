@@ -89,7 +89,7 @@ o JSON  de resposta será:
 
 # Para autenticar o login de um usuário
 
-* Faça uma requesição POST em 'localhost:5000/api/train' passando o json com um identificador do usuário, pode ser o CPF, e o diretório da imagem a ser comparada, em caso de login aprovado a imagem será inserida no dataset automaticamente, e o core da API retornará o seguinte:
+* Faça uma requesição POST em 'localhost:5000/api/login' passando o json com um identificador do usuário, pode ser o CPF, e o diretório da imagem a ser comparada, em caso de login aprovado a imagem será inserida no dataset automaticamente, e o core da API retornará o seguinte:
 
 ```json
 {
