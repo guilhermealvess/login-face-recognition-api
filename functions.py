@@ -75,7 +75,7 @@ def _train(data):
             pprint.pprint(data)
 
             start = datetime.now()
-            start_training(data)
+            #start_training(data)
             end = datetime.now()
 
             user['active'] = True

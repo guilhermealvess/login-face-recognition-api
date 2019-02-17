@@ -46,7 +46,7 @@ def login():
 
 @app.route('/api', methods=['GET', 'POST'])
 def hello():
-    return 'Hello API OK!'
+    return jsonify({'msg':'Hello API OK!'})
 
 
 
