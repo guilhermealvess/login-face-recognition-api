@@ -5,13 +5,10 @@ import pickle
 
 
 def start_training(faction):
-
 	print("[INFO] quantifying faces...")
 	imagePaths = os.listdir(faction['path_images'])
-
 	for (i, imagePath) in enumerate(imagePaths):
 		print('[INFO] processing image {}/{}'.format(i+1, len(imagePaths)))
-
 		image = cv2.imread(faction['path_images']+'/'+imagePath)
 		rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 		boxes = face_recognition.face_locations(rgb, model=faction['method_training'])

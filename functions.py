@@ -1,4 +1,3 @@
-from bson import ObjectId
 from hashlib import md5
 import logging, os, shutil
 from random import random
@@ -43,7 +42,6 @@ def _insert_data(data):
     user = db.find_one({'usr': data['usr']})
 
     if user != None:
-        
         if exist_folder('/dataset',data['usr']) == False:
             os.mkdir(os.getcwd()+'/dataset/'+data['usr'])
             
@@ -71,8 +69,6 @@ def _train(data):
 
             data['path_model'] = os.getcwd()+'/models/'+data['usr']+'/'+model_id
             data['path_images'] = os.getcwd()+'/dataset/'+data['usr']
-            import pprint
-            pprint.pprint(data)
 
             start = datetime.now()
             start_training(data)
@@ -114,7 +110,7 @@ def _login(data):
 
         if result == True:
             ext = data['image'].split('.')[-1]
-            shutil.copyfile(data['image'], os.getcwd()+'/dataset/'+data['usr']+hash(data['usr']+str(datetime.now()))+ext)
+            shutil.copyfile(data['image'], os.getcwd()+'/dataset/'+data['usr']+'/'+hash(data['usr']+str(datetime.now()))+ext)
 
             return {
                 'status': 'sucess',
@@ -127,7 +123,8 @@ def _login(data):
                 'usr': data['usr'],
                 'status': 'login refused'
             }
-
+    else:
+        {'status': 'error', 'errors':['User not found!']}
 
 
 def hash(_input):
