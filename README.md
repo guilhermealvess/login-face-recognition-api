@@ -95,7 +95,7 @@ o JSON  de resposta será:
 {
     "_id": "",
     "status": "sucess",
-    "authorized": "authorized"
+    "authorized": true
 }
 ```
 
