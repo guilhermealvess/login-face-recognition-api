@@ -5,7 +5,7 @@ import cv2
 import os
 
 
-def recognition(factions):
+def processor(factions):
 	print("[INFO] loading encodings + face detector...")
 	data = pickle.loads(open(factions["model_id"], "rb").read())
 	detector = cv2.CascadeClassifier(os.getcwd()+'/core/'+'haarcascade_frontalface_default.xml')

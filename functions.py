@@ -4,7 +4,7 @@ from random import random
 from datetime import datetime
 
 from db import Database
-from core.processor import recognition
+from core.engine import processor
 from core.decodificador_faces import start_training
 
 
@@ -106,7 +106,7 @@ def _login(data):
     if user != None:
         data['model_id'] = os.getcwd()+'/models/'+data['usr']+'/'+user['last_training']['model_id']
     
-        result = recognition(data)
+        result = processor(data)
 
         if result == True:
             ext = data['image'].split('.')[-1]
