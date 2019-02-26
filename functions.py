@@ -1,5 +1,5 @@
 from hashlib import md5
-import logging, os, shutil
+import logging, os, shutil, pathlib
 from random import random
 from datetime import datetime
 
@@ -42,8 +42,9 @@ def _insert_data(data):
     user = db.find_one({'usr': data['usr']})
 
     if user != None:
-        if exist_folder('/dataset',data['usr']) == False:
-            os.mkdir(os.getcwd()+'/dataset/'+data['usr'])
+        _exist = exist_folder('/dataset'+data['usr'])
+        if _exist.exist_folder('/dataset'+data['usr']) == False:
+            _exist.mkdir(os.getcwd()+'/dataset/'+data['usr'])
             
         _files = []
         for i in data['path_files']:
@@ -107,7 +108,6 @@ def _login(data):
         data['model_id'] = os.getcwd()+'/models/'+data['usr']+'/'+user['last_training']['model_id']
     
         result = processor(data)
-
         if result == True:
             ext = data['image'].split('.')[-1]
             shutil.copyfile(data['image'], os.getcwd()+'/dataset/'+data['usr']+'/'+hash(data['usr']+str(datetime.now()))+ext)
@@ -130,10 +130,6 @@ def _login(data):
 def hash(_input):
     return md5(_input.encode()).hexdigest()
 
-def exist_folder(folder,element):
-    try:
-        os.listdir(os.getcwd()+folder).index(element)
-        return True
-    except:
-        return False
 
+def exist_folder(_path):
+    return = pathlib.Path(os.getcwd()+_path)
