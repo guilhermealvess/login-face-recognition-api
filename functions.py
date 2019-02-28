@@ -43,7 +43,7 @@ def _insert_data(data):
 
     if user != None:
         _exist = exist_folder('/dataset'+data['usr'])
-        if _exist.exist_folder('/dataset'+data['usr']) == False:
+        if _exist.exists('/dataset'+data['usr']) == False:
             _exist.mkdir(os.getcwd()+'/dataset/'+data['usr'])
             
         _files = []
