@@ -132,4 +132,4 @@ def hash(_input):
 
 
 def exist_folder(_path):
-    return = pathlib.Path(os.getcwd()+_path)
+    return pathlib.Path(os.getcwd()+_path)
