@@ -16,5 +16,5 @@ Pillow==5.4.1
 pkg-resources==0.0.0
 pymongo==3.7.2
 requests==2.21.0
-urllib3==1.24.1
+urllib3==1.26.5
 Werkzeug==0.14.1
